@@ -83,7 +83,7 @@ export default class ImagesUploader extends Component {
 
 	static defaultProps = {
 		dataName: 'imageFiles',
-		headers:{},
+		headers: {},
 		classNames: {},
 		styles: {},
 		multiple: true,
@@ -148,10 +148,10 @@ export default class ImagesUploader extends Component {
 
 	@autobind
 	clickImage(key: number, url: string) {
-	    const clickImageCallback = this.props.clickImage;
-	    if (clickImageCallback && typeof clickImageCallback === 'function') {
-          clickImageCallback(key, url);
-      }
+		const clickImageCallback = this.props.clickImage;
+		if (clickImageCallback && typeof clickImageCallback === 'function') {
+			clickImageCallback(key, url);
+		}
 	}
 
 	@autobind
@@ -190,7 +190,7 @@ export default class ImagesUploader extends Component {
 				<div
 					className={classNames.emptyPreview || `${classNamespace}emptyPreview`}
 					style={styles.emptyPreview}
-					/>
+				/>
 			);
 		}
 		let previews = [];
@@ -229,10 +229,10 @@ export default class ImagesUploader extends Component {
 							className={classNames.imgPreview || `${classNamespace}imgPreview`}
 							key={key}
 							style={imgPreviewStyle}
-					        onClick={(e) => {
-					            e.preventDefault();
-					            this.clickImage(key, url)
-					        }}>
+							onClick={(e) => {
+								e.preventDefault();
+								this.clickImage(key, url)
+							}}>
 							{!inButton ? <div
 								className={classNames.deletePreview || `${classNamespace}deletePreview`}
 								style={deletePreviewStyle}
@@ -242,20 +242,20 @@ export default class ImagesUploader extends Component {
 									this.deleteImage(key, url);
 								}}>
 								{deleteElement
-								|| (<svg xmlns="http://www.w3.org/2000/svg" width="7.969" height="8" viewBox="0 0 7.969 8">
-									<path
-										id="X_Icon"
-										data-name="X Icon"
-										style={{
-											fill: disabled ? disabledColor : color,
-											fillRule: 'evenodd',
-										}}
-										/* eslint-disable max-len */
-										d="M562.036,606l2.849-2.863a0.247,0.247,0,0,0,0-.352l-0.7-.706a0.246,0.246,0,0,0-.352,0l-2.849,2.862-2.849-2.862a0.247,0.247,0,0,0-.352,0l-0.7.706a0.249,0.249,0,0,0,0,.352L559.927,606l-2.849,2.862a0.25,0.25,0,0,0,0,.353l0.7,0.706a0.249,0.249,0,0,0,.352,0l2.849-2.862,2.849,2.862a0.249,0.249,0,0,0,.352,0l0.7-.706a0.25,0.25,0,0,0,0-.353Z"
-										/* eslint-enable max-len */
-										transform="translate(-557 -602)"
+									|| (<svg xmlns="http://www.w3.org/2000/svg" width="7.969" height="8" viewBox="0 0 7.969 8">
+										<path
+											id="X_Icon"
+											data-name="X Icon"
+											style={{
+												fill: disabled ? disabledColor : color,
+												fillRule: 'evenodd',
+											}}
+											/* eslint-disable max-len */
+											d="M562.036,606l2.849-2.863a0.247,0.247,0,0,0,0-.352l-0.7-.706a0.246,0.246,0,0,0-.352,0l-2.849,2.862-2.849-2.862a0.247,0.247,0,0,0-.352,0l-0.7.706a0.249,0.249,0,0,0,0,.352L559.927,606l-2.849,2.862a0.25,0.25,0,0,0,0,.353l0.7,0.706a0.249,0.249,0,0,0,.352,0l2.849-2.862,2.849,2.862a0.249,0.249,0,0,0,.352,0l0.7-.706a0.25,0.25,0,0,0,0-.353Z"
+											/* eslint-enable max-len */
+											transform="translate(-557 -602)"
 										/>
-								</svg>)}
+									</svg>)}
 							</div> : <div
 								className={classNames.notification || `${classNamespace}notification`}
 								style={styles.notification ? {
@@ -266,15 +266,15 @@ export default class ImagesUploader extends Component {
 										color: notificationColor,
 									},
 								} : {
-									display: this.state.displayNotification ? 'block' : 'none',
-									backgroundColor: notificationBgColor,
-									color: notificationColor,
-								}}>
-								<span>
-									{this.props.notification
-										|| this.buildPlus(disabled, notificationColor, disabledColor, plusElement)}
-								</span>
-							</div>}
+										display: this.state.displayNotification ? 'block' : 'none',
+										backgroundColor: notificationBgColor,
+										color: notificationColor,
+									}}>
+									<span>
+										{this.props.notification
+											|| this.buildPlus(disabled, notificationColor, disabledColor, plusElement)}
+									</span>
+								</div>}
 						</div>
 					);
 				}
@@ -306,7 +306,7 @@ export default class ImagesUploader extends Component {
 							className={classNames.imgPreview || `${classNamespace}imgPreview`}
 							key={length + key}
 							style={imgPreviewStyle}
-							/>
+						/>
 					);
 				}
 				return null;
@@ -392,6 +392,7 @@ export default class ImagesUploader extends Component {
 
 	@autobind
 	handleImageChange(e: Object) {
+		console.log('Changed');
 		e.preventDefault();
 
 		const filesList = e.target.files;
@@ -400,12 +401,18 @@ export default class ImagesUploader extends Component {
 		if (onLoadStart && typeof onLoadStart === 'function') {
 			onLoadStart();
 		}
-
+		// Return when cancel button click but onChange event trigger
+		if (filesList.length === 0) {
+			return;
+		}
 		this.setState({
 			loadState: 'loading',
 		});
 		// Return when cancel button click but onChange event trigger
 		if (filesList.length === 0) {
+			this.setState({
+				loadState: '',
+			});
 			return;
 		}
 		if (this.props.max
@@ -476,13 +483,24 @@ export default class ImagesUploader extends Component {
 			});
 		}
 	}
+	@autobind
+	onCancel(files: FileList) {
+		if (!this.props.disabled) {
+			this.handleImageChange({
+				preventDefault: () => true,
+				target: {
+					files,
+				},
+			});
+		}
+	}
 
 	/* eslint-disable max-len, no-undef */
 	buildPlus(
 		disabled: boolean,
 		color: string,
 		disabledColor: string,
-		plusElement?: string|React$Element<*>
+		plusElement?: string | React$Element<*>
 	) {
 		return plusElement || (
 			<svg
@@ -501,7 +519,7 @@ export default class ImagesUploader extends Component {
 				<g>
 					<path
 						d="M500,10c13.5,0,25.1,4.8,34.7,14.4C544.2,33.9,549,45.5,549,59v392h392c13.5,0,25.1,4.8,34.7,14.4c9.6,9.6,14.4,21.1,14.4,34.7c0,13.5-4.8,25.1-14.4,34.6c-9.6,9.6-21.1,14.4-34.7,14.4H549v392c0,13.5-4.8,25.1-14.4,34.7c-9.6,9.6-21.1,14.4-34.7,14.4c-13.5,0-25.1-4.8-34.7-14.4c-9.6-9.6-14.4-21.1-14.4-34.7V549H59c-13.5,0-25.1-4.8-34.7-14.4C14.8,525.1,10,513.5,10,500c0-13.5,4.8-25.1,14.4-34.7C33.9,455.8,45.5,451,59,451h392V59c0-13.5,4.8-25.1,14.4-34.7C474.9,14.8,486.5,10,500,10L500,10z"
-						/>
+					/>
 				</g>
 			</svg>
 		);
@@ -539,7 +557,7 @@ export default class ImagesUploader extends Component {
 		}
 		const { imagePreviewUrls, optimisticPreviews } = this.state;
 		if ((!imagePreviewUrls || imagePreviewUrls.length < 1)
-		&& (!optimisticPreviews || optimisticPreviews.length < 1)) {
+			&& (!optimisticPreviews || optimisticPreviews.length < 1)) {
 			return (
 				<span
 					className={classNames.pseudobuttonContent || `${classNamespace}pseudobuttonContent`}
@@ -601,7 +619,7 @@ export default class ImagesUploader extends Component {
 					d="M562.036,606l2.849-2.863a0.247,0.247,0,0,0,0-.352l-0.7-.706a0.246,0.246,0,0,0-.352,0l-2.849,2.862-2.849-2.862a0.247,0.247,0,0,0-.352,0l-0.7.706a0.249,0.249,0,0,0,0,.352L559.927,606l-2.849,2.862a0.25,0.25,0,0,0,0,.353l0.7,0.706a0.249,0.249,0,0,0,.352,0l2.849-2.862,2.849,2.862a0.249,0.249,0,0,0,.352,0l0.7-.706a0.25,0.25,0,0,0,0-.353Z"
 					/* eslint-enable max-len */
 					transform="translate(-557 -602)"
-					/>
+				/>
 			</svg>)}
 		</div>);
 	}
@@ -702,6 +720,7 @@ export default class ImagesUploader extends Component {
 						{this.buildClose()}
 						<Dropzone
 							onDrop={this.handleFileDrop}
+							onFileDialogCancel={this.onCancel}
 							disableClick
 							accept="image/*"
 							className={classNames.dropzone || `${classNamespace}dropzone`}
@@ -749,7 +768,7 @@ export default class ImagesUploader extends Component {
 						multiple={multiple === false ? false : 'multiple'}
 						disabled={disabled || loadState === 'loading'}
 						onChange={this.handleImageChange}
-						/>
+					/>
 				</div>
 				{multiple !== false
 					? this.buildPreviews(
