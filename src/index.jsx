@@ -485,14 +485,7 @@ export default class ImagesUploader extends Component {
 	}
 	@autobind
 	onCancel(files: FileList) {
-		if (!this.props.disabled) {
-			this.handleImageChange({
-				preventDefault: () => true,
-				target: {
-					files,
-				},
-			});
-		}
+		console.log('onCancel trigger', files);
 	}
 
 	/* eslint-disable max-len, no-undef */
