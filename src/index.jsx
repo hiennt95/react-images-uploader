@@ -112,6 +112,7 @@ export default class ImagesUploader extends Component {
 			displayNotification: false,
 		};
 		this.input = null;
+		this.dropzone = null;
 	}
 	/* eslint-enable react/sort-comp */
 
@@ -389,7 +390,12 @@ export default class ImagesUploader extends Component {
 			}
 		}
 	}
-
+	@autobind
+	handleClickInputFile(e: Object){
+		console.log('Click input');
+		e.preventDefault();
+		this.dropzone.open();
+	}
 	@autobind
 	handleImageChange(e: Object) {
 		console.log('Changed');
@@ -400,10 +406,6 @@ export default class ImagesUploader extends Component {
 
 		if (onLoadStart && typeof onLoadStart === 'function') {
 			onLoadStart();
-		}
-		// Return when cancel button click but onChange event trigger
-		if (filesList.length === 0) {
-			return;
 		}
 		this.setState({
 			loadState: 'loading',
@@ -484,8 +486,12 @@ export default class ImagesUploader extends Component {
 		}
 	}
 	@autobind
-	onCancel(files: FileList) {
-		console.log('onCancel trigger', files);
+	onCancel() {
+		console.log('onCancel trigger');
+		this.setState({
+			loadState: '',
+		});
+		return;
 	}
 
 	/* eslint-disable max-len, no-undef */
@@ -718,6 +724,9 @@ export default class ImagesUploader extends Component {
 							accept="image/*"
 							className={classNames.dropzone || `${classNamespace}dropzone`}
 							style={dropzoneStyle}
+							ref={(ref) => {
+								this.dropzone = ref;
+							}}
 							multiple={
 								/* eslint-disable no-unneeded-ternary */
 								multiple === false ? false : true
@@ -761,6 +770,7 @@ export default class ImagesUploader extends Component {
 						multiple={multiple === false ? false : 'multiple'}
 						disabled={disabled || loadState === 'loading'}
 						onChange={this.handleImageChange}
+						onClick={this.handleClickInputFile}
 					/>
 				</div>
 				{multiple !== false
