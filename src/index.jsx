@@ -738,9 +738,13 @@ export default class ImagesUploader extends Component {
 								classNamespace={`${classNamespace}button-`}
 								className={classNames.pseudobutton || `${classNamespace}pseudobutton`}
 								style={pseudobuttonStyle}
+								controlled
 								onClick={(e) => {
 									e.preventDefault();
 									if (this.input) {
+										this.setState({
+											loadState: 'loading',
+										});
 										this.input.click();
 									}
 								}}
